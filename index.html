@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Patient Wait Manager</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <div class="container">
+    <div id="loadingOverlay" class="loading-overlay">
+      <div class="loader">
+        <div class="hospital-symbol">🏥</div>
+        <h2>WELCOME</h2>
+
+       
+        
+        <div class="progress-container">
+          <div class="progress-text">
+            <span>Loading</span>
+            <span id="progressPercent">0%</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress" id="progressBar"></div>
+          </div>
+        </div>
+        
+        <div class="loader-dots">
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="form-steps">
+        <div class="step active" id="step1">1<span class="step-label">Basic Info</span></div>
+        <div class="step" id="step2">2<span class="step-label">Medical</span></div>
+        <div class="step" id="step3">3<span class="step-label">Admin</span></div>
+        <div class="step" id="step4">4<span class="step-label">Payment</span></div>
+        <div class="step" id="step5">5<span class="step-label">Review</span></div>
+      </div>
+
+      <header class="header">
+        <h1><i class="fas fa-hospital"></i> Patient Wait Manager</h1>
+        <p>Please fill in the patient information form below</p>
+      </header>
+
+      <div class="priority-notice hidden" id="priorityNotice">
+        <i class="fas fa-exclamation-circle"></i>
+        Emergency patients are prioritized and will be seen immediately
+      </div>
+
+      <form id="patientForm">
+        <section>
+          <div class="section-header">
+            <h2><i class="fas fa-user"></i> Basic Patient Info</h2>
+            <i class="fas fa-chevron-down toggle-icon"></i>
+          </div>
+          <div class="section-content">
+            <label>Patient Type:</label>
+            <div class="radio-group">
+              <label><input type="radio" name="patientType" value="Normal" required> <i class="fas fa-user"></i> Normal</label>
+              <label><input type="radio" name="patientType" value="Emergency"> <i class="fas fa-ambulance"></i> Emergency</label>
+            </div>
+
+            <label>Full Name:</label>
+            <input type="text" name="fullName" required>
+            <span class="error-message hidden" id="fullNameError"><i class="fas fa-exclamation-circle"></i> Please enter a valid name</span>
+
+            <label>Age / Date of Birth:</label>
+            <input type="text" name="age" placeholder="e.g., 35 / 1990-05-21">
+            <span class="error-message hidden" id="ageError"><i class="fas fa-exclamation-circle"></i> Please enter a valid age or date of birth</span>
+
+            <label>Gender:</label>
+            <select name="gender" required>
+              <option value="">-- Select --</option>
+              <option>Male</option>
+              <option>Female</option>
+              <option>Other</option>
+            </select>
+            <span class="error-message hidden" id="genderError"><i class="fas fa-exclamation-circle"></i> Please select a gender</span>
+
+            <label>Contact Number:</label>
+            <input type="tel" name="contact" required>
+            <span class="error-message hidden" id="contactError"><i class="fas fa-exclamation-circle"></i> Please enter a valid contact number</span>
+
+            <label>Address:</label>
+            <textarea name="address" rows="2"></textarea>
+          </div>
+        </section>
+
+        <!-- Emergency Contact -->
+        <section>
+          <div class="section-header">
+            <h2><i class="fas fa-address-card"></i> Emergency Contact</h2>
+            <i class="fas fa-chevron-down toggle-icon"></i>
+          </div>
+          <div class="section-content">
+            <label>Name:</label>
+            <input type="text" name="emergencyName">
+
+            <label>Relationship:</label>
+            <input type="text" name="emergencyRelation">
+
+            <label>Contact Number:</label>
+            <input type="tel" name="emergencyContact">
+          </div>
+        </section>
+
+        <!-- Medical Details -->
+        <section>
+          <div class="section-header">
+            <h2><i class="fas fa-heartbeat"></i> Medical Details</h2>
+            <i class="fas fa-chevron-down toggle-icon"></i>
+          </div>
+          <div class="section-content">
+            <label>Symptoms / Reason for Visit:</label>
+            <textarea name="symptoms" rows="2" required></textarea>
+            <span class="error-message hidden" id="symptomsError"><i class="fas fa-exclamation-circle"></i> Please describe symptoms</span>
+
+            <label>Allergies:</label>
+            <input type="text" name="allergies" placeholder="e.g., penicillin, peanuts">
+
+            <label>Current Medications:</label>
+            <input type="text" name="medications">
+
+            <label>Previous Medical History:</label>
+            <textarea name="history" rows="2"></textarea>
+
+            <label>Blood Group:</label>
+            <select name="bloodGroup">
+              <option value="">-- Select --</option>
+              <option>A+</option><option>A-</option>
+              <option>B+</option><option>B-</option>
+              <option>O+</option><option>O-</option>
+              <option>AB+</option><option>AB-</option>
+            </select>
+          </div>
+        </section>
+
+        <!-- Admin Info -->
+        <section>
+          <div class="section-header">
+            <h2><i class="fas fa-clipboard-list"></i> Administrative Info</h2>
+            <i class="fas fa-chevron-down toggle-icon"></i>
+          </div>
+          <div class="section-content">
+            <label>Patient ID / Registration Number:</label>
+            <div class="patient-id-container">
+              <input type="text" name="patientID" readonly id="patientID">
+              <button type="button" id="generateIDBtn" class="generate-btn"><i class="fas fa-key"></i> Generate ID</button>
+            </div>
+
+            <label>Date & Time of Admission:</label>
+            <input type="datetime-local" name="admissionDate" required>
+            <span class="error-message hidden" id="admissionDateError"><i class="fas fa-exclamation-circle"></i> Please select admission date and time</span>
+
+            <label>Department:</label>
+            <select name="department" required>
+              <option value="">-- Select --</option>
+              <option>General Medicine</option>
+              <option>Surgery</option>
+              <option>Pediatrics</option>
+              <option>Orthopedics</option>
+              <option>Gynecology</option>
+            </select>
+            <span class="error-message hidden" id="departmentError"><i class="fas fa-exclamation-circle"></i> Please select a department</span>
+
+            <label>Consulting Doctor:</label>
+            <input type="text" name="doctor">
+          </div>
+        </section>
+
+        <section>
+          <div class="section-header">
+            <h2><i class="fas fa-credit-card"></i> Payment / Insurance</h2>
+            <i class="fas fa-chevron-down toggle-icon"></i>
+          </div>
+          <div class="section-content">
+            <label>Payment Type:</label>
+            <select name="paymentType" id="paymentType">
+              <option value="">-- Select --</option>
+              <option>Cash</option>
+              <option>Card</option>
+              <option>Insurance</option>
+            </select>
+
+            <div id="insuranceFields" class="hidden">
+              <label>Insurance Provider:</label>
+              <input type="text" name="insuranceProvider">
+
+              <label>Policy Number:</label>
+              <input type="text" name="policyNumber">
+            </div>
+          </div>
+        </section>
+
+        <!-- Wait Time Estimate -->
+        <section class="wait-time-estimate hidden" id="waitTimeSection">
+          <h2><i class="fas fa-clock"></i> Estimated Wait Time</h2>
+          <div class="wait-time-display">
+            <span id="waitTimeValue">Calculating...</span>
+          </div>
+          <p class="wait-note">Note: Wait times are estimates and may change based on current patient volume</p>
+        </section>
+        <div class="btn-group">
+          <button type="button" id="prevBtn" class="hidden"><i class="fas fa-arrow-left"></i> Previous</button>
+          <button type="button" id="nextBtn">Next <i class="fas fa-arrow-right"></i></button>
+          <button type="submit" id="submitBtn" class="hidden"><i class="fas fa-check-circle"></i> Submit</button>
+          <button type="reset"><i class="fas fa-redo"></i> Reset</button>
+        </div>
+      </form>
+      <div id="result" class="result hidden">
+        <div class="result-header">
+          <i class="fas fa-check-circle"></i>
+          <h3>Registration Successful!</h3>
+        </div>
+        <p>Your information has been submitted successfully. Please note your patient ID for future reference.</p>
+        <div class="result-details" id="resultDetails">
+      
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+<script src="script.js"></script>
+</html>
